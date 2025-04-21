@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lemos.sh</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">lemos.sh</div>
+      <ul class="nav-links">
+        <li><a href="#home">Início</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#projetos">Projetos</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="tela ativa">
+      <div class="apresentacao">
+        <h1>Oi, eu sou o André 👋</h1>
+        <p>Estudo e compartilho conteúdo sobre redes, servidores, segurança e DevOps.</p>
+      </div>
+    </section>
+
+    <section id="sobre" class="tela">
+      <h2>Sobre</h2>
+      <p>Aqui vai o conteúdo da seção sobre mim.</p>
+    </section>
+
+    <section id="projetos" class="tela">
+      <div class="projetos-header">
+        <h2>Projetos</h2>
+        <div id="filtros">
+          <button onclick="filtrarRepos('todos')">Todos</button>
+          <button onclick="filtrarRepos('devops')">DevOps</button>
+          <button onclick="filtrarRepos('cybersecurity')">Cybersecurity</button>
+          <button onclick="filtrarRepos('automacao')">Automação</button>
+        </div>
+      </div>
+      <div id="repos-container" class="repos"></div>
+    </section>
+    
+
+    <section id="contato" class="tela">
+      <h2>Contato</h2>
+      <p>Aqui vai o conteúdo da seção de contato.</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
