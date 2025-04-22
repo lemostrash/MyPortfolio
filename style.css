@@ -64,7 +64,10 @@ section.tela {
   text-align: center;
   background-size: cover;
   background-position: center;
+  overflow-y: auto; /* << ADICIONE ESTA LINHA */
+  -webkit-overflow-scrolling: touch; /* Suporte suave no iOS */
 }
+
 
 section.tela.ativa {
   display: block;
@@ -179,4 +182,106 @@ section.tela.ativa {
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s;
+}
+
+.sobre-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  height: 100%;
+  padding: 20px;
+  flex-wrap: wrap;
+  overflow-y: auto;
+}
+
+.foto-perfil img {
+  width: 250px;
+  height: 250px;
+  border-radius: 20px;
+  object-fit: cover;
+  border: 3px solid #00ffcc;
+}
+
+.texto-sobre {
+  max-width: 600px;
+  text-align: left;
+}
+
+.texto-sobre h2 {
+  font-size: 2em;
+  color: #00ffcc;
+  margin-bottom: 10px;
+}
+
+.texto-sobre p {
+  font-size: 1em;
+  line-height: 1.6;
+  color: #ddd;
+}
+
+.contato-container.seguro {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.contato-container h2 {
+  color: #00ffcc;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.contato-container p {
+  color: #ccc;
+  margin-bottom: 30px;
+  font-size: 1.1em;
+}
+
+.contato-links {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.item-contato {
+  background-color: #1a1a1a;
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  color: white;
+  border: 1px solid #333;
+}
+
+.item-contato a {
+  color: #00ffcc;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.item-contato a:hover {
+  text-decoration: underline;
+}
+
+.item-contato button {
+  margin-top: 10px;
+  background-color: #00ffcc;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: black;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.item-contato button:hover {
+  background-color: #00ddb3;
 }

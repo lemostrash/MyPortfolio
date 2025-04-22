@@ -6,6 +6,14 @@
   <title>lemos.sh</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+<script>
+  function copiarEmail() {
+    const email = document.getElementById('email').innerText;
+    navigator.clipboard.writeText(email).then(() => {
+      alert("Email copiado para a área de transferência!");
+    });
+  }
+</script>
 <body>
   <header>
     <nav>
@@ -28,9 +36,21 @@
     </section>
 
     <section id="sobre" class="tela">
-      <h2>Sobre</h2>
-      <p>Aqui vai o conteúdo da seção sobre mim.</p>
+      <div class="sobre-container">
+        <div class="foto-perfil">
+          <img src="img/eu.jpg" alt="Foto de André">
+        </div>
+        <div class="texto-sobre">
+          <h2>Sobre Mim</h2>
+          <p>Olá! Me chamo André, sou apaixonado por tecnologia, redes, segurança da informação. Formando em Ciência da Computação, venho acumulando experiência prática em TI, com foco em cibersegurança, redes e automação de sistemas.</p>
+          <p>Gosto de aprender colocando a mão na massa: monto laboratórios caseiros, automatizo tarefas com scripts, exploro ferramentas de segurança e infraestrutura, e estou sempre buscando formas de aplicar esse conhecimento no mundo real.</p>
+          <p>Criei o projeto pessoal <strong>@lemos.sh</strong> no Instagram para compartilhar minhas trilhas práticas de estudo sobre Cibersegurança, redes e automação de sistemas e muito mais — tudo de forma direta, acessível e aplicada.</p>
+          <p>Acredito que a melhor forma de aprender é ensinando. Por isso, sigo a filosofia P.A.F.E. – Postei, Aprendi, Fixei e Expliquei, onde transformo minha rotina de estudos em conteúdos que ajudam outras pessoas a aprender também.</p>
+          <p>Me acompanhe por lá para ver os bastidores dos meus projetos, dicas rápidas do dia a dia e muito conteúdo técnico compartilhado de forma leve e descomplicada.</p>
+        </div>
+      </div>
     </section>
+    
 
     <section id="projetos" class="tela">
       <div class="projetos-header">
@@ -47,9 +67,30 @@
     
 
     <section id="contato" class="tela">
-      <h2>Contato</h2>
-      <p>Aqui vai o conteúdo da seção de contato.</p>
-    </section>
+      <div class="contato-container seguro">
+        <h2>Vamos conversar?</h2>
+        <p>Se quiser bater um papo, tirar dúvidas ou propor algo, esses são meus canais oficiais:</p>
+    
+        <div class="contato-links">
+          <div class="item-contato">
+            <strong>Email:</strong>
+            <span id="email">contato@lemos.sh</span>
+            <button onclick="copiarEmail()">Copiar</button>
+          </div>
+    
+          <div class="item-contato">
+            <strong>Instagram:</strong>
+            <a href="https://instagram.com/lemos.sh" target="_blank">@lemos.sh</a>
+          </div>
+    
+          <div class="item-contato">
+            <strong>GitHub:</strong>
+            <a href="https://github.com/seuusuario" target="_blank">github.com/seuusuario</a>
+          </div>
+        </div>
+      </div>
+    </section>    
+    
   </main>
 
   <script src="script.js"></script>
