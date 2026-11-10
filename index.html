@@ -1,96 +1,905 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lemos.sh</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PORTFÓLIO // EM CONSTRUÇÃO</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #050505;
+      --text: #e0e0e0;
+      --red: #ff003c;
+      --green: #00ff9d;
+      --amber: #ffb000;
+      --dim: #1a1a1a;
+      --border: #333;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* Efeito CRT / Scanlines */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.18) 0px,
+        rgba(0,0,0,0.18) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.85) 150%);
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 30px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5,5,5,0.85);
+      backdrop-filter: blur(5px);
+      position: relative;
+      z-index: 100;
+      font-size: 0.9rem;
+    }
+
+    .logo {
+      font-size: 1.2rem;
+      letter-spacing: 4px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+    .logo .bracket { color: var(--red); }
+
+    .header-status {
+      display: flex;
+      gap: 20px;
+      color: #666;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+    }
+    .header-status .dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* MAIN */
+    main {
+      display: flex;
+      flex-direction: column;
+      padding: 20px 30px 10px;
+      max-width: 1400px;
+      margin: 0 auto;
+      gap: 18px;
+      position: relative;
+      z-index: 50;
+    }
+
+    .intro {
+      text-align: center;
+      padding: 6px 0 14px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .intro .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      color: var(--amber);
+      border: 1px solid var(--amber);
+      padding: 4px 12px;
+      margin-bottom: 12px;
+    }
+
+    .intro h1 {
+      font-family: 'VT323', monospace;
+      font-size: 2.2rem;
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .intro h1 .highlight {
+      color: var(--red);
+      text-shadow: 0 0 12px rgba(255,0,60,0.6);
+    }
+
+    .intro p {
+      color: #888;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .intro p strong {
+      color: var(--text);
+      font-weight: normal;
+      background: rgba(255,176,0,0.12);
+      padding: 0 4px;
+    }
+
+    /* HUD do Jogo */
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      font-size: 0.85rem;
+    }
+
+    .hud-item {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: 1px;
+    }
+    .hud-item span:first-child { color: #666; font-size: 0.7rem; }
+    .hud-item span:last-child {
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .hud-item.score span:last-child { color: var(--green); text-shadow: 0 0 8px rgba(0,255,157,0.5); }
+    .hud-item.misses span:last-child { color: var(--red); }
+    .hud-item.time span:last-child { color: var(--amber); }
+
+    /* ÁREA DO JOGO */
+    .game-wrapper {
+      position: relative;
+      border: 2px solid var(--border);
+      background:
+        linear-gradient(0deg, rgba(255,0,60,0.03), rgba(0,255,157,0.03)),
+        repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px),
+        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px),
+        #000;
+      overflow: hidden;
+      box-shadow: inset 0 0 60px rgba(0,0,0,0.9), 0 0 25px rgba(255,0,60,0.08);
+    }
+
+    .game-wrapper::before,
+    .game-wrapper::after,
+    .game-wrapper .corner-3,
+    .game-wrapper .corner-4 {
+      content: "";
+      position: absolute;
+      width: 22px; height: 22px;
+      border: 2px solid var(--red);
+      pointer-events: none;
+      z-index: 20;
+    }
+    .game-wrapper::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+    .game-wrapper::after { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+    .game-wrapper .corner-3 { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+    .game-wrapper .corner-4 { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      height: 480px;
+      cursor: none;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(5,5,5,0.92);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 30;
+      padding: 20px;
+      backdrop-filter: blur(3px);
+    }
+
+    .overlay.hidden { display: none; }
+
+    .overlay h2 {
+      font-family: 'VT323', monospace;
+      font-size: 2.4rem;
+      letter-spacing: 4px;
+      color: var(--text);
+      margin-bottom: 10px;
+      text-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+    .overlay h2.alert { color: var(--red); text-shadow: 0 0 20px rgba(255,0,60,0.7); }
+    .overlay p {
+      color: #888;
+      margin-bottom: 24px;
+      max-width: 540px;
+      line-height: 1.5;
+      letter-spacing: 1px;
+    }
+    .overlay p strong { color: var(--text); }
+
+    .btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      letter-spacing: 3px;
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--red);
+      padding: 12px 32px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      box-shadow: 0 0 15px rgba(255,0,60,0.3);
+    }
+    .btn:hover {
+      background: var(--red);
+      color: #000;
+      box-shadow: 0 0 30px rgba(255,0,60,0.8);
+      transform: scale(1.05);
+    }
+
+    /* Footer */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 30px;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: #555;
+      letter-spacing: 2px;
+      position: relative;
+      z-index: 100;
+    }
+    footer .green { color: var(--green); }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      main { padding: 14px; gap: 12px; }
+      .hud { grid-template-columns: repeat(2, 1fr); }
+      #gameCanvas { height: 380px; }
+      .intro h1 { font-size: 1.5rem; }
+      .intro p { font-size: 0.8rem; }
+      .overlay h2 { font-size: 1.7rem; }
+      .header-status { display: none; }
+      footer { flex-direction: column; gap: 6px; text-align: center; }
+    }
+  </style>
 </head>
-<script>
-  function copiarEmail() {
-    const email = document.getElementById('email').innerText;
-    navigator.clipboard.writeText(email).then(() => {
-      alert("Email copiado para a área de transferência!");
-    });
-  }
-</script>
 <body>
+
+  <!-- HEADER -->
   <header>
-    <nav>
-      <div class="logo">lemos.sh</div>
-      <ul class="nav-links">
-        <li><a href="#home">Início</a></li>
-        <li><a href="#sobre">Sobre</a></li>
-        <li><a href="#projetos">Projetos</a></li>
-        <li><a href="#contato">Contato</a></li>
-      </ul>
-    </nav>
+    <div class="logo">
+      <span class="bracket">[</span> PORTFÓLIO <span class="bracket">]</span>
+    </div>
+    <div class="header-status">
+      <div><span class="dot"></span>BUILD IN PROGRESS</div>
+      <div>STATUS: EM CONSTRUÇÃO</div>
+    </div>
   </header>
 
+  <!-- MAIN -->
   <main>
-    <section id="home" class="tela ativa">
-      <div class="apresentacao">
-        <h1>Oi, eu sou o André 👋</h1>
-        <p>Estudo e compartilho conteúdo sobre redes, servidores, segurança e DevOps.</p>
-      </div>
+    <!-- INTRO -->
+    <section class="intro">
+      <div class="tag">// SITE EM DESENVOLVIMENTO</div>
+      <h1>OLÁ, <span class="highlight">AMIGO</span>!</h1>
+      <p>
+        Estou construindo meu portfólio de <strong>Cibersegurança</strong> e, enquanto ele não fica pronto,
+        você pode se divertir eliminando <strong>ameaças digitais</strong> neste mini-jogo.
+        Clique nos malwares antes que eles infectem o sistema. <strong>Boa caçada, operador.</strong>
+      </p>
     </section>
 
-    <section id="sobre" class="tela">
-      <div class="sobre-container">
-        <div class="foto-perfil">
-          <img src="img/eu.jpg" alt="Foto de André">
-        </div>
-        <div class="texto-sobre">
-          <h2>Sobre Mim</h2>
-          <p>Olá! Me chamo André, sou apaixonado por tecnologia, redes, segurança da informação. Formando em Ciência da Computação, venho acumulando experiência prática em TI, com foco em cibersegurança, redes e automação de sistemas.</p>
-          <p>Gosto de aprender colocando a mão na massa: monto laboratórios caseiros, automatizo tarefas com scripts, exploro ferramentas de segurança e infraestrutura, e estou sempre buscando formas de aplicar esse conhecimento no mundo real.</p>
-          <p>Criei o projeto pessoal <strong>@lemos.sh</strong> no Instagram para compartilhar minhas trilhas práticas de estudo sobre Cibersegurança, redes e automação de sistemas e muito mais — tudo de forma direta, acessível e aplicada.</p>
-          <p>Acredito que a melhor forma de aprender é ensinando. Por isso, sigo a filosofia P.A.F.E. – Postei, Aprendi, Fixei e Expliquei, onde transformo minha rotina de estudos em conteúdos que ajudam outras pessoas a aprender também.</p>
-        </div>
-      </div>
+    <!-- HUD -->
+    <section class="hud">
+      <div class="hud-item score"><span>// SCORE</span><span id="score">0</span></div>
+      <div class="hud-item hits"><span>// HITS</span><span id="hits">0</span></div>
+      <div class="hud-item misses"><span>// MISSES</span><span id="misses">0</span></div>
+      <div class="hud-item time"><span>// TIME</span><span id="timer">30.0</span></div>
     </section>
-    
 
-    <section id="projetos" class="tela">
-      <div class="projetos-header">
-        <h2>Projetos</h2>
-        <div id="filtros">
-          <button onclick="filtrarRepos('todos')">Todos</button>
-          <button onclick="filtrarRepos('devops')">DevOps</button>
-          <button onclick="filtrarRepos('cybersecurity')">Cybersecurity</button>
-          <button onclick="filtrarRepos('automacao')">Automação</button>
-        </div>
-      </div>
-      <div id="repos-container" class="repos"></div>
-    </section>
-    
+    <!-- GAME -->
+    <div class="game-wrapper">
+      <div class="corner-3"></div>
+      <div class="corner-4"></div>
+      <canvas id="gameCanvas"></canvas>
 
-    <section id="contato" class="tela">
-      <div class="contato-container seguro">
-        <h2>Vamos conversar?</h2>
-        <p>Se quiser bater um papo, tirar dúvidas ou propor algo, esses são meus canais oficiais:</p>
-    
-        <div class="contato-links">
-          <div class="item-contato">
-            <strong>Linkedin:</strong>
-            <a href="https://www.linkedin.com/in/andredelemos/" target="_blank">André de Lemos</a>
-          </div>
-    
-          <div class="item-contato">
-            <strong>Instagram:</strong>
-            <a href="https://instagram.com/lemos.sh" target="_blank">@lemos.sh</a>
-          </div>
-    
-          <div class="item-contato">
-            <strong>GitHub:</strong>
-            <a href="https://github.com/lemostrash" target="_blank">github.com/seuusuario</a>
-          </div>
-        </div>
+      <!-- Overlay START -->
+      <div class="overlay" id="startOverlay">
+        <h2>// MALWARE_HUNTER.exe</h2>
+        <p>
+          O sistema foi invadido por <strong>malwares</strong>. Clique nos vírus para
+          eliminá-los antes que se espalhem.<br>
+          Cada clique errado penaliza sua pontuação. Você tem <strong>30 segundos</strong>.
+        </p>
+        <button class="btn" id="startBtn">Iniciar Caçada</button>
       </div>
-    </section>    
-    
+
+      <!-- Overlay GAME OVER -->
+      <div class="overlay hidden" id="endOverlay">
+        <h2 class="alert">// SISTEMA LIMPO</h2>
+        <p id="finalMsg">Precisão: 0%</p>
+        <button class="btn" id="restartBtn">Executar Novamente</button>
+      </div>
+    </div>
   </main>
 
-  <script src="script.js"></script>
+  <!-- FOOTER -->
+  <footer>
+    <div>// © 2024 — PORTFÓLIO EM CONSTRUÇÃO</div>
+    <div><span class="green">[ AMBIENTE DE TESTES ]</span> &nbsp;|&nbsp; HTML5 + CANVAS</div>
+  </footer>
+
+  <!-- GAME SCRIPT -->
+  <script>
+    (() => {
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+      const scoreEl = document.getElementById('score');
+      const hitsEl = document.getElementById('hits');
+      const missesEl = document.getElementById('misses');
+      const timerEl = document.getElementById('timer');
+      const startOverlay = document.getElementById('startOverlay');
+      const endOverlay = document.getElementById('endOverlay');
+      const finalMsg = document.getElementById('finalMsg');
+
+      // Configurações
+      const GAME_DURATION = 30;
+      const TARGET_LIFETIME = 1500;
+      const SPAWN_INTERVAL = 620;
+      const TARGET_RADIUS = 30;
+      const MAX_TARGETS = 6;
+
+      let state = {
+        running: false,
+        score: 0,
+        hits: 0,
+        misses: 0,
+        startTime: 0,
+        timeLeft: GAME_DURATION,
+        targets: [],
+        spawnTimer: 0,
+        particles: [],
+        lastFrame: 0,
+        mouse: { x: -100, y: -100 }
+      };
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      window.addEventListener('resize', resizeCanvas);
+
+      // ============================================================
+      // TIPOS DE MALWARE
+      // Cada tipo tem um ícone desenhado no canvas.
+      // ============================================================
+      const MALWARE_TYPES = ['skull', 'bug', 'corrupted', 'worm'];
+
+      class Target {
+        constructor(x, y) {
+          this.x = x;
+          this.y = y;
+          this.r = TARGET_RADIUS;
+          this.born = performance.now();
+          this.dying = false;
+          this.deathStart = 0;
+          this.angle = Math.random() * Math.PI * 2;
+          this.type = MALWARE_TYPES[Math.floor(Math.random() * MALWARE_TYPES.length)];
+          this.rotation = Math.random() * Math.PI * 2;
+          this.glitchOffset = 0;
+          this.glitchTick = 0;
+        }
+
+        update(now) {
+          this.angle += 0.02;
+          this.glitchTick++;
+          if (this.glitchTick % 6 === 0) {
+            this.glitchOffset = (Math.random() - 0.5) * 3;
+          }
+          if (this.dying) return;
+          if (now - this.born > TARGET_LIFETIME) {
+            this.dying = true;
+            this.deathStart = now;
+            state.misses++;
+            missesEl.textContent = state.misses;
+            state.score = Math.max(0, state.score - 25);
+            scoreEl.textContent = state.score;
+            createExplosion(this.x, this.y, '#ff003c', 10);
+          }
+        }
+
+        isDead(now) {
+          return this.dying && now - this.deathStart > 250;
+        }
+
+        contains(px, py) {
+          const dx = px - this.x;
+          const dy = py - this.y;
+          return Math.sqrt(dx*dx + dy*dy) <= this.r;
+        }
+
+        draw(now) {
+          const t = now / 200;
+          const pulse = 1 + Math.sin(t) * 0.05;
+          const r = this.r * pulse;
+
+          // Anel externo rotativo (AMEÇA)
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.angle);
+
+          ctx.beginPath();
+          ctx.strokeStyle = this.dying ? '#550018' : 'rgba(255,0,60,0.7)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 6]);
+          ctx.arc(0, 0, r + 6, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Pequenas marcas de "aviso" ao redor
+          if (!this.dying) {
+            for (let i = 0; i < 4; i++) {
+              const a = i * Math.PI / 2 + this.angle;
+              const px = Math.cos(a) * (r + 12);
+              const py = Math.sin(a) * (r + 12);
+              ctx.fillStyle = 'rgba(255,176,0,0.8)';
+              ctx.fillRect(px - 2, py - 2, 4, 4);
+            }
+          }
+          ctx.restore();
+
+          // Fundo circular (máscara para o ícone)
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
+          const grad = ctx.createRadialGradient(this.x, this.y, 2, this.x, this.y, r);
+          if (this.dying) {
+            grad.addColorStop(0, 'rgba(255,0,60,0.15)');
+            grad.addColorStop(1, 'rgba(255,0,60,0)');
+          } else {
+            grad.addColorStop(0, '#1a0008');
+            grad.addColorStop(1, '#0a0004');
+          }
+          ctx.fillStyle = grad;
+          ctx.fill();
+          ctx.clip();
+
+          // Desenha o ícone do malware
+          ctx.translate(this.x + this.glitchOffset, this.y);
+          drawMalwareIcon(this.type, r, this.dying);
+
+          ctx.restore();
+
+          // Borda
+          ctx.beginPath();
+          ctx.strokeStyle = this.dying ? '#550018' : '#ff003c';
+          ctx.lineWidth = 2;
+          ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // Ponto de "quarentena" no centro
+          if (!this.dying) {
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      // ============================================================
+      // DESENHO DE ÍCONES DE MALWARE
+      // ============================================================
+      function drawMalwareIcon(type, r, dying) {
+        const color = dying ? '#550018' : '#ff003c';
+        const accent = dying ? '#3a0010' : '#ffb000';
+        const white = dying ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.9)';
+
+        if (type === 'skull') {
+          // Caveira de código
+          const s = r * 0.55;
+          // Crânio
+          ctx.beginPath();
+          ctx.fillStyle = color;
+          ctx.arc(0, -s * 0.15, s * 0.75, 0, Math.PI * 2);
+          ctx.fill();
+          // Mandíbula
+          ctx.beginPath();
+          ctx.fillRect(-s * 0.55, s * 0.35, s * 1.1, s * 0.45);
+          ctx.fill();
+          // Olhos
+          ctx.fillStyle = '#050505';
+          ctx.beginPath();
+          ctx.arc(-s * 0.3, -s * 0.2, s * 0.22, 0, Math.PI * 2);
+          ctx.arc(s * 0.3, -s * 0.2, s * 0.22, 0, Math.PI * 2);
+          ctx.fill();
+          // Pupilas "X" (morto)
+          ctx.strokeStyle = white;
+          ctx.lineWidth = 1.2;
+          [-0.3, 0.3].forEach(ex => {
+            const cx = ex * s;
+            const cy = -s * 0.2;
+            ctx.beginPath();
+            ctx.moveTo(cx - 3, cy - 3); ctx.lineTo(cx + 3, cy + 3);
+            ctx.moveTo(cx + 3, cy - 3); ctx.lineTo(cx - 3, cy + 3);
+            ctx.stroke();
+          });
+          // Dentes
+          ctx.fillStyle = '#050505';
+          for (let i = -2; i <= 2; i++) {
+            ctx.fillRect(i * s * 0.22 - 1, s * 0.4, 2, s * 0.3);
+          }
+
+        } else if (type === 'bug') {
+          // Bug/Inseto (aranha de código)
+          const s = r * 0.55;
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2.5;
+          // Corpo
+          ctx.beginPath();
+          ctx.ellipse(0, 0, s * 0.55, s * 0.8, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(0, -s * 0.35, s * 0.35, 0, Math.PI * 2);
+          ctx.stroke();
+          // Patas
+          for (let i = 0; i < 4; i++) {
+            const side = i < 2 ? -1 : 1;
+            const yy = -s * 0.3 + (i % 2) * s * 0.6;
+            ctx.beginPath();
+            ctx.moveTo(side * s * 0.5, yy);
+            ctx.lineTo(side * s * 1.1, yy - s * 0.25);
+            ctx.lineTo(side * s * 1.3, yy + s * 0.15);
+            ctx.stroke();
+          }
+          // Olhos vermelhos brilhantes
+          ctx.fillStyle = accent;
+          ctx.beginPath();
+          ctx.arc(-s * 0.15, -s * 0.4, s * 0.1, 0, Math.PI * 2);
+          ctx.arc(s * 0.15, -s * 0.4, s * 0.1, 0, Math.PI * 2);
+          ctx.fill();
+
+        } else if (type === 'corrupted') {
+          // Arquivo corrompido
+          const s = r * 0.6;
+          // Corpo do arquivo
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(-s * 0.6, -s * 0.8);
+          ctx.lineTo(s * 0.3, -s * 0.8);
+          ctx.lineTo(s * 0.6, -s * 0.5);
+          ctx.lineTo(s * 0.6, s * 0.8);
+          ctx.lineTo(-s * 0.6, s * 0.8);
+          ctx.closePath();
+          ctx.fill();
+          // Dobra do canto
+          ctx.fillStyle = accent;
+          ctx.beginPath();
+          ctx.moveTo(s * 0.3, -s * 0.8);
+          ctx.lineTo(s * 0.6, -s * 0.5);
+          ctx.lineTo(s * 0.3, -s * 0.5);
+          ctx.closePath();
+          ctx.fill();
+          // Linhas de código corrompidas
+          ctx.strokeStyle = '#050505';
+          ctx.lineWidth = 1.5;
+          for (let i = 0; i < 4; i++) {
+            const yy = -s * 0.3 + i * s * 0.28;
+            const ww = (i % 2 === 0) ? s * 0.9 : s * 0.6;
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.4, yy);
+            ctx.lineTo(-s * 0.4 + ww, yy);
+            ctx.stroke();
+          }
+          // "X" vermelho de corrupção
+          ctx.strokeStyle = dying ? '#550018' : '#ff003c';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(-s * 0.5, s * 0.3); ctx.lineTo(s * 0.5, s * 0.7);
+          ctx.moveTo(s * 0.5, s * 0.3); ctx.lineTo(-s * 0.5, s * 0.7);
+          ctx.stroke();
+
+        } else if (type === 'worm') {
+          // Worm (verme) segmentado
+          const s = r * 0.55;
+          ctx.strokeStyle = color;
+          ctx.lineWidth = s * 0.5;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(-s * 0.8, s * 0.4);
+          ctx.bezierCurveTo(
+            -s * 0.5, -s * 0.6,
+             s * 0.4, s * 0.6,
+             s * 0.8, -s * 0.4
+          );
+          ctx.stroke();
+          // Segmentos
+          ctx.strokeStyle = accent;
+          ctx.lineWidth = 2;
+          for (let i = 0; i <= 6; i++) {
+            const t = i / 6;
+            const px = -s * 0.8 + t * s * 1.6;
+            const py = Math.sin(t * Math.PI * 2) * s * 0.5;
+            ctx.beginPath();
+            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = accent;
+            ctx.fill();
+          }
+          // Cabeça
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(-s * 0.8, s * 0.4, s * 0.28, 0, Math.PI * 2);
+          ctx.fill();
+          // Olhos
+          ctx.fillStyle = white;
+          ctx.beginPath();
+          ctx.arc(-s * 0.9, s * 0.32, 2, 0, Math.PI * 2);
+          ctx.arc(-s * 0.7, s * 0.32, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Partículas
+      function createExplosion(x, y, color, count) {
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 1 + Math.random() * 3;
+          state.particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 1,
+            color
+          });
+        }
+      }
+
+      function updateParticles(dt) {
+        state.particles = state.particles.filter(p => {
+          p.x += p.vx * dt * 60;
+          p.y += p.vy * dt * 60;
+          p.vy += 0.12;
+          p.life -= dt * 1.8;
+          return p.life > 0;
+        });
+      }
+
+      function drawParticles() {
+        state.particles.forEach(p => {
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+      }
+
+      // Crosshair
+      function drawCrosshair() {
+        const { x, y } = state.mouse;
+        if (x < 0 || y < 0) return;
+        ctx.strokeStyle = 'rgba(0,255,157,0.9)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x - 14, y); ctx.lineTo(x - 4, y);
+        ctx.moveTo(x + 4, y); ctx.lineTo(x + 14, y);
+        ctx.moveTo(x, y - 14); ctx.lineTo(x, y - 4);
+        ctx.moveTo(x, y + 4); ctx.lineTo(x, y + 14);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,255,157,0.9)';
+        ctx.fill();
+      }
+
+      function spawnTarget() {
+        if (state.targets.length >= MAX_TARGETS) return;
+        const rect = canvas.getBoundingClientRect();
+        const padding = 70;
+        const x = padding + Math.random() * (rect.width - padding * 2);
+        const y = padding + Math.random() * (rect.height - padding * 2);
+        state.targets.push(new Target(x, y));
+      }
+
+      // Loop principal
+      function loop(now) {
+        if (!state.running) return;
+
+        const dt = Math.min((now - state.lastFrame) / 1000, 0.05);
+        state.lastFrame = now;
+
+        const elapsed = (now - state.startTime) / 1000;
+        state.timeLeft = Math.max(0, GAME_DURATION - elapsed);
+        timerEl.textContent = state.timeLeft.toFixed(1);
+
+        if (state.timeLeft <= 0) {
+          endGame();
+          return;
+        }
+
+        state.spawnTimer += dt * 1000;
+        if (state.spawnTimer >= SPAWN_INTERVAL) {
+          state.spawnTimer = 0;
+          spawnTarget();
+        }
+
+        state.targets.forEach(t => t.update(now));
+        state.targets = state.targets.filter(t => !t.isDead(now));
+        updateParticles(dt);
+
+        const rect = canvas.getBoundingClientRect();
+        ctx.clearRect(0, 0, rect.width, rect.height);
+
+        // Grid de fundo
+        ctx.strokeStyle = 'rgba(0,255,157,0.05)';
+        ctx.lineWidth = 1;
+        const gridSize = 40;
+        for (let x = 0; x < rect.width; x += gridSize) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, rect.height); ctx.stroke();
+        }
+        for (let y = 0; y < rect.height; y += gridSize) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(rect.width, y); ctx.stroke();
+        }
+
+        state.targets.forEach(t => t.draw(now));
+        drawParticles();
+        drawCrosshair();
+
+        requestAnimationFrame(loop);
+      }
+
+      function handleShoot(px, py) {
+        if (!state.running) return;
+        let hit = false;
+        for (let i = state.targets.length - 1; i >= 0; i--) {
+          const t = state.targets[i];
+          if (!t.dying && t.contains(px, py)) {
+            hit = true;
+            state.hits++;
+            state.score += 100;
+            hitsEl.textContent = state.hits;
+            scoreEl.textContent = state.score;
+            createExplosion(t.x, t.y, '#00ff9d', 14);
+            state.targets.splice(i, 1);
+            break;
+          }
+        }
+        if (!hit) {
+          state.misses++;
+          state.score = Math.max(0, state.score - 15);
+          missesEl.textContent = state.misses;
+          scoreEl.textContent = state.score;
+          createExplosion(px, py, '#ff003c', 5);
+        }
+      }
+
+      function getMousePos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      }
+
+      canvas.addEventListener('mousemove', (e) => {
+        state.mouse = getMousePos(e);
+      });
+
+      canvas.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        const pos = getMousePos(e);
+        handleShoot(pos.x, pos.y);
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        state.mouse = { x: -100, y: -100 };
+      });
+
+      canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        const pos = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+        state.mouse = pos;
+        handleShoot(pos.x, pos.y);
+      }, { passive: false });
+
+      canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        state.mouse = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+      }, { passive: false });
+
+      function startGame() {
+        resizeCanvas();
+        state = {
+          running: true,
+          score: 0,
+          hits: 0,
+          misses: 0,
+          startTime: performance.now(),
+          timeLeft: GAME_DURATION,
+          targets: [],
+          spawnTimer: 0,
+          particles: [],
+          lastFrame: performance.now(),
+          mouse: { x: -100, y: -100 }
+        };
+        scoreEl.textContent = '0';
+        hitsEl.textContent = '0';
+        missesEl.textContent = '0';
+        timerEl.textContent = GAME_DURATION.toFixed(1);
+
+        startOverlay.classList.add('hidden');
+        endOverlay.classList.add('hidden');
+
+        requestAnimationFrame(loop);
+      }
+
+      function endGame() {
+        state.running = false;
+        const totalShots = state.hits + state.misses;
+        const accuracy = totalShots > 0 ? Math.round((state.hits / totalShots) * 100) : 0;
+        finalMsg.innerHTML = `
+          Pontuação Final: <strong style="color:#00ff9d">${state.score}</strong><br>
+          Hits: ${state.hits} &nbsp;|&nbsp; Misses: ${state.misses}<br>
+          Precisão: <strong style="color:#ff003c">${accuracy}%</strong>
+        `;
+        endOverlay.classList.remove('hidden');
+        state.targets = [];
+        state.particles = [];
+        const rect = canvas.getBoundingClientRect();
+        ctx.clearRect(0, 0, rect.width, rect.height);
+      }
+
+      document.getElementById('startBtn').addEventListener('click', startGame);
+      document.getElementById('restartBtn').addEventListener('click', startGame);
+
+      resizeCanvas();
+    })();
+  </script>
 </body>
 </html>
